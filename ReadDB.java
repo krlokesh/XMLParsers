@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class ReadDB {
 	
-	static Map<String, DBMapper> readDbMapperFromDB() throws SQLException {
+	static Map<String, ActionalLogAnalyzer> readDbMapperFromDB() throws SQLException {
 		
-		Map<String, DBMapper> resultMap = new HashMap<String, DBMapper>();
+		Map<String, ActionalLogAnalyzer> resultMap = new HashMap<String, ActionalLogAnalyzer>();
 			
 		Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;user=sa;password=root;database=LogAnalyzer");
 		Statement stmt = conn.createStatement();
@@ -21,7 +21,7 @@ public class ReadDB {
         rs = stmt.executeQuery("SELECT * FROM ActionalLogAnalyzer");
         while ( rs.next() ) {
             
-            DBMapper dbMapper = new DBMapper();
+            ActionalLogAnalyzer dbMapper = new ActionalLogAnalyzer();
             String exceptionCode = rs.getString("ExceptionMsgCode");
             dbMapper.setExceptionMsg(exceptionCode);
             dbMapper.setExceptionMsgCode(rs.getString("ExceptionMsg"));
@@ -34,7 +34,7 @@ public class ReadDB {
         }
         conn.close();
 		    
-		return new HashMap<String, DBMapper>();
+		return new HashMap<String, ActionalLogAnalyzer>();
 	}
 
 }

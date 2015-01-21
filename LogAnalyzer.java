@@ -37,7 +37,7 @@ public class LogAnalyzer {
 		FileOutputStream outCSVFileOS = new FileOutputStream(outCSVFilePath);
 		
 		//TODO: populate dbMap from db
-		Map<String, DBMapper> dbMapper = ReadDB.readDbMapperFromDB();
+		Map<String, ActionalLogAnalyzer> dbMapper = ReadDB.readDbMapperFromDB();
 		System.out.println("dbMapper.size() : " + dbMapper.size());
 		
 		Set<String> exceptionCodeList = new HashSet<String>();
