@@ -7,10 +7,6 @@ import java.io.Serializable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-/*
- *  Class for creating a sample gui for the application.
- */
-
 public class AppTest extends JFrame {
 	
 	public AppTest(){

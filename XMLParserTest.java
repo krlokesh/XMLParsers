@@ -47,7 +47,7 @@ public class XMLParserTest {
 			
 			Set<String> exceptionCodeList = new HashSet<String>();
 			
-			Map<String, ActionalLogAnalyzer> dbMapper = readDbMapperFromDB();
+			Map<String, ActionalLogAnalyzer> dbMapper = ReadDB.readDbMapperFromDB();
 			
 			
 			
@@ -113,33 +113,7 @@ public class XMLParserTest {
 			}
 	   }
 	
-		private static Map<String, ActionalLogAnalyzer> readDbMapperFromDB() throws SQLException {
 		
-		Map<String, ActionalLogAnalyzer> resultMap = new HashMap<String, ActionalLogAnalyzer>();
-			
-		Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;user=sa;password=root;database=LogAnalyzer");
-		Statement stmt = conn.createStatement();
-        ResultSet rs;
-
-        rs = stmt.executeQuery("SELECT * FROM ActionalLogAnalyzer");
-        while ( rs.next() ) {
-            
-            ActionalLogAnalyzer dbMapper = new ActionalLogAnalyzer();
-            String exceptionCode = rs.getString("ExceptionMsgCode");
-            dbMapper.setExceptionMsgCode(exceptionCode);
-            dbMapper.setExceptionMsg(rs.getString("ExceptionMsg"));
-            dbMapper.setType(rs.getString("Type"));
-            dbMapper.setCause(rs.getString("Cause"));
-            dbMapper.setResolution(rs.getString("Resolution"));
-            dbMapper.setNotes(rs.getString("Notes"));
-            System.out.println(rs.getString("Notes"));
-            
-            resultMap.put(exceptionCode, dbMapper);
-        }
-        conn.close();
-		    
-		return resultMap;
-	}
 
 	
 	

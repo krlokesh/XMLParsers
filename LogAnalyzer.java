@@ -85,28 +85,58 @@ public class LogAnalyzer {
 						if(nextLine == null) {
 							nextLine = "";
 						}
-						if(nextLine.indexOf(msgStartTag) != -1){
+						
+						
+						while(nextLine.indexOf(msgStartTag) == -1)
+							nextLine = br.readLine();
+						// Case 1: Single Line Message
+						if(nextLine.indexOf(msgEndTag) != -1){
+							msg = nextLine.substring(nextLine.indexOf(msgStartTag) + msgStartTag.length(), nextLine.indexOf(msgEndTag));
+							
+						}
+						// Case 2: Multiple Line Message
+						else{
 							nextLine = nextLine.substring(nextLine.indexOf(msgStartTag) + msgStartTag.length());
 							while(nextLine.indexOf(msgEndTag) == -1 ){
 								msg += ("\n" + nextLine);
 								nextLine = br.readLine();
 							}
-						}
-						
-						
+							//In case we have some message part before the end tag in the same line
+							if(nextLine.indexOf(msgEndTag) != -1 && nextLine.trim().length() > msgEndTag.length())
+								msg += ("\n" + nextLine.substring(0, nextLine.indexOf(msgEndTag)));
+						}	
+							
+												
 						if(dbMapper.keySet().contains(messageId)){
 		            		if(!exceptionCodeList.contains(messageId)){
 		            			outCSVFileOS.write(new String("\"" + serverName + "\",\"" + inputFile.getName() + "\",\"" + messageId + "\",\"" 
-		            		+ msg + "\"," + dbMapper.get(messageId).toString() + "\r\n").getBytes());
-		            	   		System.out.println("Writing to CSV" + dbMapper.get(messageId).toString());
-			            		exceptionCodeList.add(messageId);
+		            		+ msg.trim() + "\"," + dbMapper.get(messageId).toCSVString() + "\r\n").getBytes());
+		            			
+		            			//if the Review == 0 then write to the unknown error list
+		            			if(dbMapper.get(messageId).getReviewed() == 0)
+		            				out.write(new String("ServerName : " +serverName + " \n FileName : " + inputFile.getName()  +" \n Severity : " + errorType  + " \n MessageId : " + messageId + "\n Message : " + msg
+			            				+ "\n ------------------------------------------------------- \n").getBytes());
+		            	   		exceptionCodeList.add(messageId);
 		            		}
 		            	}
 		            	else{
 		            		if(!exceptionCodeList.contains(messageId)){
-		            			out.write(new String("ServerName : " +serverName + " FileName : " + inputFile.getName()  +" Severity : " + errorType  + " MessageId : " + messageId + "\n Message : " + msg
+		            			//writing to txt file
+		            			out.write(new String("ServerName : " +serverName + " \n FileName : " + inputFile.getName()  +" \n Severity : " + errorType  + " \n MessageId : " + messageId + "\n Message : " + msg
 		            				+ "\n ------------------------------------------------------- \n").getBytes());
 		            			exceptionCodeList.add(messageId);
+		            			
+		            			//writing to the db
+		            			ActionalLogAnalyzer actionalLogAnalyzer = new ActionalLogAnalyzer();
+		            			actionalLogAnalyzer.setCause("");
+		            			actionalLogAnalyzer.setExceptionMsg(msg);
+		            			actionalLogAnalyzer.setExceptionMsgCode(messageId);
+		            			actionalLogAnalyzer.setNotes("");
+		            			actionalLogAnalyzer.setResolution("");
+		            			actionalLogAnalyzer.setReviewed(0);
+		            			actionalLogAnalyzer.setType(errorType.toString());
+		            			
+		            			ReadDB.writeDbMapperToDB(actionalLogAnalyzer);
 		            		}
 		            	}
 						nextLine = nextLine.trim();
@@ -137,6 +167,4 @@ public class LogAnalyzer {
 		
 	}
 	
-	
-
 }

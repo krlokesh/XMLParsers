@@ -5,19 +5,23 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
+/*
+ * We are considering only .log files and only those which are not console logs
+ */
 public class MainApplication {
 	
 	public static void main(String[] args) throws FileNotFoundException, SQLException{
-	
+					
 		String folderName = "D:\\work\\loganalyzer\\input\\AMSSupport";
-		
-	
+			
 		ArrayList<File> files = new ArrayList<File>();
 		ArrayList<FileAndServerName> listToProbe = new ArrayList<FileAndServerName>();
 		
 	    listf(folderName, files);
 	    for(File file: files){
 	    	String fileAbsolutePath = file.getAbsolutePath();
+	    	
 	    	if(!fileAbsolutePath.contains("console") && fileAbsolutePath.contains(".log")){
 	    		System.out.println(file.getAbsolutePath() + file.getParentFile().getName());
 	    		listToProbe.add(new FileAndServerName(file.getParentFile().getName(), file.getAbsolutePath()));
